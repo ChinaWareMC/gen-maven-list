@@ -6,20 +6,48 @@ group = 'io.github.over-run'
 version = '1.0-SNAPSHOT'
 
 def findFiles(String m ,File f) {
+    var notFindFile = new String[] {
+            ".editorconfig",
+            ".git",
+            ".gitignore",
+            ".idea",
+            "index.md",
+            "README.md",
+    }
     if (f.isDirectory()) {
         def files = f.listFiles()
-
         def fi = new File(f, "index.md")
         if (!fi.exists()) {
             fi.createNewFile()
         }
-        BufferedWriter bw =  new BufferedWriter(new FileWriter(file))
-        bw.writeLine("# ${m}")
+        BufferedWriter bw =  new BufferedWriter(new FileWriter(fi))
+        bw.writeLine("# $m")
         bw.newLine()
         bw.writeLine("---")
-        for (final def fil in files ) {
-            
+        if (!m.isEmpty()) {
+            bw.writeLine("- [../](../index.md)")
         }
+        for (final def fil in files ) {
+            def path = fil.getAbsolutePath().replace("\\", "/")
+            if (
+                    path.contains(".editorconfig")
+                            || path.contains(".git")
+                            || path.contains(".gitignore")
+                            || path.contains(".idea")
+                            || path.contains("index.md")
+                            || path.contains("README.md")
+            ) {
+                continue
+            }
+            def fil1 = path.substring(path.indexOf("maven-repo") + 11)
+            if (!fil.isDirectory()) {
+                bw.writeLine("- [$fil1]($fil1) ${new Date(fil.lastModified())}")
+                findFiles(fil1, fil)
+            } else {
+                bw.writeLine("- [$fil1]($fil1/index.md)")
+            }
+        }
+        bw.close()
     }
 
 }
@@ -30,4 +58,3 @@ if (!mvn.exists()) {
 } else {
     findFiles("", mvn)
 }
-println mvn
