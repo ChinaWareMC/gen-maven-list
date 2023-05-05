@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.github.over-run'
+version = '1.0-SNAPSHOT'
+
+def findFiles(String m ,File f) {
+    if (f.isDirectory()) {
+        def files = f.listFiles()
+
+        def fi = new File(f, "index.md")
+        if (!fi.exists()) {
+            fi.createNewFile()
+        }
+        BufferedWriter bw =  new BufferedWriter(new FileWriter(file))
+        bw.writeLine("# ${m}")
+        bw.newLine()
+        bw.writeLine("---")
+        for (final def fil in files ) {
+            
+        }
+    }
+
+}
+
+def mvn = file("../maven-repo/")
+if (!mvn.exists()) {
+    throw new RuntimeException("not clone maven-repo")
+} else {
+    findFiles("", mvn)
+}
+println mvn
