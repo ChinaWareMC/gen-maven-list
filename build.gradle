@@ -32,11 +32,12 @@ def findFiles(String m ,File f) {
                 continue
             }
             def fil1 = path.substring(path.indexOf("maven-repo") + 11)
+            def split = fil1.split("/")
             if (!fil.isDirectory()) {
-                bw.writeLine("- [$fil1]($fil1) ${new Date(fil.lastModified())}")
+                bw.writeLine("- [${split[split.length - 1]}](${split[split.length - 1]}) ${new Date(fil.lastModified())}")
 
             } else {
-                bw.writeLine("- [$fil1/]($fil1/index.md)")
+                bw.writeLine("- [${split[split.length - 1]}](${split[split.length - 1]}/index.md)")
                 findFiles("$fil1/", fil)
             }
         }
